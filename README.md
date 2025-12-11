@@ -1,6 +1,7 @@
 # API_FEModel3D
 
-[![CI](https://github.com/Furumar/API_FEModel3D/actions/workflows/ci.yml/badge.svg)](https://github.com/Furumar/API_FEModel3D/actions)
+[![CI (matrix)](https://github.com/Furumar/API_FEModel3D/actions/workflows/ci.yml/badge.svg)](https://github.com/Furumar/API_FEModel3D/actions)
+[![CI (py3.14)](https://github.com/Furumar/API_FEModel3D/actions/workflows/ci-3.14.yml/badge.svg)](https://github.com/Furumar/API_FEModel3D/actions/workflows/ci-3.14.yml)
 
 Small demo + documentation for using the `Pynite` FEModel3D API.
 
