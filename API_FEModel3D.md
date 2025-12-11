@@ -94,9 +94,86 @@ A 3D finite element model object. This object has methods and dictionaries to cr
 
 
 ## Notes
-- The `FEModel3D` instance exposes data containers such as `nodes` and `members` (dictionaries) holding `Node3D` and `Member3D` objects.
-- Methods accept load-case strings such as `'Case 1'` and combination names such as `'Combo 1'`.
-- See the installed package files (e.g. `Pynite/FEModel3D.py`, `Pynite/Analysis.py`) for implementation details and more helper utilities.
+ - The `FEModel3D` instance exposes data containers such as `nodes` and `members` (dictionaries) holding `Node3D` and `Member3D` objects.
+ - Methods accept load-case strings such as `'Case 1'` and combination names such as `'Combo 1'`.
+ - See the installed package files (e.g. `Pynite/FEModel3D.py`, `Pynite/Analysis.py`) for implementation details and more helper utilities.
+
+## Expanded details & examples
+
+The sections below expand method parameter details and show short, copy-pasteable examples.
+
+### Materials and sections
+
+- `add_material(name, E, G, nu, rho, fy=None)` — create a material.
+- `add_section(name, A, Iy, Iz, J)` — create a cross-section definition used by members.
+
+Example:
+
+```python
+m.add_material('steel', E=210e9, G=81e9, nu=0.3, rho=7850)
+m.add_section('S1', A=0.02, Iy=8.1e-6, Iz=8.1e-6, J=1.6e-5)
+```
+
+### Nodes and members
+
+- `add_node(name, X, Y, Z)` — adds a node at coordinates.
+- `add_member(name, i_node, j_node, material_name, section_name, rotation=0.0, tension_only=False, comp_only=False)` — adds a member between two nodes using a named material & section.
+
+Example (frame geometry + members):
+
+```python
+m.add_node('N1', 0, 0, 0)
+m.add_node('N2', 6, 0, 0)
+m.add_member('M1', 'N1', 'N2', 'steel', 'S1')
+```
+
+### Supports and loads
+
+- `def_support(node_name, support_DX=False, support_DY=False, support_DZ=False, support_RX=False, support_RY=False, support_RZ=False)` — boolean flags restrain DOFs when True.
+- `add_node_load(node_name, direction, P, case='Case 1')` — direction: `'FX','FY','FZ','MX','MY','MZ'`.
+- `add_member_pt_load(member_name, direction, P, x, case='Case 1')` — apply a point load to a member at local x.
+
+Example:
+
+```python
+m.def_support('N1', True, True, True, True, True, True)  # fully fixed
+m.add_node_load('N3', 'FY', -100.0, case='Case 1')
+```
+
+### Analysis and results
+
+- `analyze(...)` — general analysis (iterative for tension-only behavior). Key args: `log`, `check_stability`, `check_statics`, `max_iter`, `sparse`, `num_steps`.
+- `analyze_linear(...)` — faster single-pass linear solve.
+- `analyze_PDelta(...)` — second-order geometric effects.
+- `D(combo_name='Combo 1')` — returns global displacement vector.
+- `P(combo_name='Combo 1')` — global nodal force vector.
+- `K(combo_name='Combo 1', ...)` — global stiffness matrix.
+
+Reading node displacements:
+
+```python
+m.analyze()
+for name, node in m.nodes.items():
+	# Node DX/DY may be a float or a dict keyed by load-case/combination
+	dx = node.DX if not isinstance(node.DX, dict) else next(iter(node.DX.values()))
+	dy = node.DY if not isinstance(node.DY, dict) else next(iter(node.DY.values()))
+	print(name, dx, dy)
+```
+
+### Reporting
+
+Use `Pynite.Reporting.create_report` to generate HTML or PDF reports. If `format='pdf'` the helper uses `pdfkit` + `wkhtmltopdf` (ensure wkhtmltopdf is installed or provide path via `get_wkhtmltopdf_path`).
+
+Example:
+
+```python
+from Pynite.Reporting import create_report
+create_report(m, output_filepath='my_report.html', format='html', log=True)
+```
+
+---
+
+Generated from installed Pynite source files (`FEModel3D.py`, `Reporting.py`, `Analysis.py`) on 2025-12-11.
 
 ---
 
