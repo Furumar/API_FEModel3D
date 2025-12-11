@@ -1,0 +1,4 @@
+Pynite==1.4.2
+PyNiteFEA==1.6.2
+matplotlib==3.10.8
+numpy==2.3.5
