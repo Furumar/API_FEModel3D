@@ -1,5 +1,7 @@
 # API_FEModel3D
 
+[![CI](https://github.com/Furumar/API_FEModel3D/actions/workflows/ci.yml/badge.svg)](https://github.com/Furumar/API_FEModel3D/actions)
+
 Small demo + documentation for using the `Pynite` FEModel3D API.
 
 This repository contains:
