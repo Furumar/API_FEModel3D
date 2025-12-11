@@ -17,6 +17,15 @@ jobs:
         with:
           python-version: '3.14'
 
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+          key: ${{ runner.os }}-pip-3.14-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-3.14-
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -30,3 +39,10 @@ jobs:
         run: |
           python 2D-kehikko.py
           if [ -f 2D-kehikko.png ]; then echo "Output image created: 2D-kehikko.png"; ls -l 2D-kehikko.png; else echo "2D-kehikko.png not found"; exit 1; fi
+
+      - name: Upload 2D-kehikko.png artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: 2D-kehikko-image
+          path: 2D-kehikko.png
