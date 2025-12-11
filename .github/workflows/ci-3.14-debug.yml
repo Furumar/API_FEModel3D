@@ -1,0 +1,45 @@
+name: CI - Python 3.14 Debug
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+jobs:
+  test-3-14-debug:
+    name: Test (Python 3.14, debug)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.14
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.14'
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run verify_install (capture logs)
+        run: |
+          mkdir -p artifacts
+          python verify_install.py 2>&1 | tee artifacts/verify_install.log
+        shell: bash
+
+      - name: Upload verify_install.log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify_install-log
+          path: artifacts/verify_install.log
