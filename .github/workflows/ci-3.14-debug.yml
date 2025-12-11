@@ -37,6 +37,18 @@ jobs:
           python verify_install.py 2>&1 | tee artifacts/verify_install.log
         shell: bash
 
+      - name: Print verify_install.log to workflow console
+        if: always()
+        run: |
+          if [ -f artifacts/verify_install.log ]; then
+            echo "---- verify_install.log ----"
+            sed -n '1,400p' artifacts/verify_install.log || true
+            echo "---- end verify_install.log ----"
+          else
+            echo "verify_install.log not found"
+          fi
+        shell: bash
+
       - name: Upload verify_install.log
         if: always()
         uses: actions/upload-artifact@v4
