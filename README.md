@@ -51,3 +51,7 @@ Feel free to open issues and pull requests. If you want me to add CI (GitHub Act
 License
 
 Add a `LICENSE` file if you want to publish this repo publicly with a specific license.
+
+Continuous Integration
+
+This repository now includes a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs on push to `master`. It sets up Python, installs `requirements.txt` and runs `verify_install.py`. The workflow runs on Ubuntu with Python 3.11.
